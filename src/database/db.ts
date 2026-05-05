@@ -1,17 +1,23 @@
 import * as SQLite from 'expo-sqlite';
 import { Habit, HabitLog, Milestone } from '../types';
 import { CategoryColors, CategoryIcons, MILESTONE_THRESHOLDS } from '../theme';
-import { today } from '../utils/streak';
-import { calculateStreak } from '../utils/streak';
+import { today, calculateStreak } from '../utils/streak';
 
-const db = SQLite.openDatabaseSync('habitflow.db');
+let _db: SQLite.SQLiteDatabase | null = null;
+
+function db(): SQLite.SQLiteDatabase {
+  if (!_db) {
+    _db = SQLite.openDatabaseSync('habitflow.db');
+  }
+  return _db;
+}
 
 // ── Schema ─────────────────────────────────────────────────
 
 export function initDB(): void {
-  db.execSync(`
-    PRAGMA foreign_keys = ON;
+  db().execSync('PRAGMA foreign_keys = ON;');
 
+  db().execSync(`
     CREATE TABLE IF NOT EXISTS habits (
       id            INTEGER PRIMARY KEY AUTOINCREMENT,
       name          TEXT    NOT NULL,
@@ -26,7 +32,9 @@ export function initDB(): void {
       created_at    TEXT    NOT NULL,
       is_active     INTEGER DEFAULT 1
     );
+  `);
 
+  db().execSync(`
     CREATE TABLE IF NOT EXISTS habit_logs (
       id         INTEGER PRIMARY KEY AUTOINCREMENT,
       habit_id   INTEGER NOT NULL,
@@ -38,7 +46,9 @@ export function initDB(): void {
       FOREIGN KEY (habit_id) REFERENCES habits(id) ON DELETE CASCADE,
       UNIQUE(habit_id, date)
     );
+  `);
 
+  db().execSync(`
     CREATE TABLE IF NOT EXISTS milestones (
       id           INTEGER PRIMARY KEY AUTOINCREMENT,
       habit_id     INTEGER NOT NULL,
@@ -54,13 +64,13 @@ export function initDB(): void {
 // ── Habits ─────────────────────────────────────────────────
 
 export function getAllHabits(): Habit[] {
-  return db.getAllSync<Habit>(
+  return db().getAllSync<Habit>(
     'SELECT * FROM habits WHERE is_active = 1 ORDER BY name'
   );
 }
 
 export function getHabit(id: number): Habit | null {
-  return db.getFirstSync<Habit>('SELECT * FROM habits WHERE id = ?', [id]) ?? null;
+  return db().getFirstSync<Habit>('SELECT * FROM habits WHERE id = ?', [id]) ?? null;
 }
 
 export function createHabit(params: {
@@ -86,7 +96,7 @@ export function createHabit(params: {
     days_of_week = '0,1,2,3,4,5,6',
   } = params;
 
-  const result = db.runSync(
+  const result = db().runSync(
     `INSERT INTO habits
      (name, description, category, frequency, target_value, unit, color, icon, days_of_week, created_at)
      VALUES (?,?,?,?,?,?,?,?,?,?)`,
@@ -111,11 +121,11 @@ export function updateHabit(id: number, params: Partial<{
   if (!entries.length) return;
   const set = entries.map(([k]) => `${k} = ?`).join(', ');
   const vals = [...entries.map(([, v]) => v), id];
-  db.runSync(`UPDATE habits SET ${set} WHERE id = ?`, vals);
+  db().runSync(`UPDATE habits SET ${set} WHERE id = ?`, vals);
 }
 
 export function deleteHabit(id: number): void {
-  db.runSync('DELETE FROM habits WHERE id = ?', [id]);
+  db().runSync('DELETE FROM habits WHERE id = ?', [id]);
 }
 
 // ── Logs ───────────────────────────────────────────────────
@@ -123,7 +133,7 @@ export function deleteHabit(id: number): void {
 export function logHabit(habitId: number, date?: string, value = 1, notes = ''): void {
   const d = date ?? today();
   const now = new Date().toISOString();
-  db.runSync(
+  db().runSync(
     `INSERT INTO habit_logs (habit_id, date, value, completed, notes, logged_at)
      VALUES (?,?,?,1,?,?)
      ON CONFLICT(habit_id, date) DO UPDATE SET
@@ -134,14 +144,14 @@ export function logHabit(habitId: number, date?: string, value = 1, notes = ''):
 }
 
 export function unlogHabit(habitId: number, date?: string): void {
-  db.runSync(
+  db().runSync(
     'DELETE FROM habit_logs WHERE habit_id = ? AND date = ?',
     [habitId, date ?? today()]
   );
 }
 
 export function isLogged(habitId: number, date?: string): boolean {
-  const row = db.getFirstSync<{ id: number }>(
+  const row = db().getFirstSync<{ id: number }>(
     'SELECT id FROM habit_logs WHERE habit_id = ? AND date = ?',
     [habitId, date ?? today()]
   );
@@ -150,19 +160,19 @@ export function isLogged(habitId: number, date?: string): boolean {
 
 export function getLogsForHabit(habitId: number, limit?: number): HabitLog[] {
   if (limit) {
-    return db.getAllSync<HabitLog>(
+    return db().getAllSync<HabitLog>(
       'SELECT * FROM habit_logs WHERE habit_id = ? ORDER BY date DESC LIMIT ?',
       [habitId, limit]
     );
   }
-  return db.getAllSync<HabitLog>(
+  return db().getAllSync<HabitLog>(
     'SELECT * FROM habit_logs WHERE habit_id = ? ORDER BY date DESC',
     [habitId]
   );
 }
 
 export function getAllLogs(): HabitLog[] {
-  return db.getAllSync<HabitLog>('SELECT * FROM habit_logs ORDER BY date DESC');
+  return db().getAllSync<HabitLog>('SELECT * FROM habit_logs ORDER BY date DESC');
 }
 
 // ── Toggle (returns new state) ─────────────────────────────
@@ -178,12 +188,11 @@ export function toggleLog(habitId: number): { logged: boolean; streak: number } 
   const streak = calculateStreak(logs);
 
   if (!logged) {
-    // Check milestones
     const existing = new Set(getMilestones(habitId).map(m => m.type));
     for (const t of MILESTONE_THRESHOLDS) {
       const key = `streak_${t}`;
       if (streak >= t && !existing.has(key)) {
-        db.runSync(
+        db().runSync(
           'INSERT OR IGNORE INTO milestones (habit_id, type, streak_count, achieved_at) VALUES (?,?,?,?)',
           [habitId, key, streak, new Date().toISOString()]
         );
@@ -197,7 +206,7 @@ export function toggleLog(habitId: number): { logged: boolean; streak: number } 
 // ── Milestones ─────────────────────────────────────────────
 
 export function getMilestones(habitId: number): Milestone[] {
-  return db.getAllSync<Milestone>(
+  return db().getAllSync<Milestone>(
     'SELECT * FROM milestones WHERE habit_id = ? ORDER BY streak_count',
     [habitId]
   );

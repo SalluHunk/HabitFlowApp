@@ -211,7 +211,7 @@ export default function AddHabitModal({ visible, onClose, onSave, editHabit }: P
               <TextInput
                 style={[styles.input, styles.emojiInput]}
                 value={icon}
-                onChangeText={t => setIcon(t.slice(-2))}
+                onChangeText={t => setIcon([...t].slice(-1).join('') || '✨')}
                 placeholder="✨"
                 placeholderTextColor={Colors.text3}
               />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { Colors } from '../theme';
 
 interface Cell { date: string; done?: boolean; count?: number }
@@ -25,10 +25,10 @@ function colorWithAlpha(hex: string, alpha: number) {
 }
 
 export default function HeatmapGrid({ cells, color = Colors.primary, maxCount, cellSize = 14, gap = 3 }: Props) {
-  const max = maxCount ?? Math.max(1, ...cells.map(c => c.count ?? (c.done ? 1 : 0)));
+  const max = maxCount ?? (cells.length === 0 ? 1 : Math.max(1, ...cells.map(c => c.count ?? (c.done ? 1 : 0))));
 
   const getCellColor = (cell: Cell) => {
-    if ('done' in cell) return cell.done ? color : Colors.border;
+    if (cell.done !== undefined) return cell.done ? color : Colors.border;
     const cnt = cell.count ?? 0;
     if (cnt === 0) return Colors.border;
     const ratio = cnt / max;
@@ -38,9 +38,12 @@ export default function HeatmapGrid({ cells, color = Colors.primary, maxCount, c
     return color;
   };
 
+  // 7 rows of cells + 6 gaps between them
+  const gridHeight = 7 * cellSize + 6 * gap;
+
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-      <View style={[styles.grid, { gap }]}>
+      <View style={[styles.grid, { gap, maxHeight: gridHeight }]}>
         {cells.map((cell, i) => (
           <View
             key={i}
@@ -50,7 +53,6 @@ export default function HeatmapGrid({ cells, color = Colors.primary, maxCount, c
                 width: cellSize,
                 height: cellSize,
                 backgroundColor: getCellColor(cell),
-                marginBottom: gap,
               },
             ]}
           />
@@ -64,7 +66,6 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'column',
     flexWrap: 'wrap',
-    maxHeight: 7 * (14 + 3),
   },
   cell: {
     borderRadius: 3,

@@ -24,22 +24,9 @@
         "backgroundColor": "#6366f1"
       },
       "package": "com.habitflow.app",
-      "versionCode": 1,
-      "permissions": [
-        "RECEIVE_BOOT_COMPLETED",
-        "VIBRATE",
-        "SCHEDULE_EXACT_ALARM",
-        "USE_EXACT_ALARM"
-      ]
+      "versionCode": 1
     },
-    "plugins": [
-      [
-        "expo-notifications",
-        {
-          "color": "#6366f1"
-        }
-      ]
-    ],
+    "plugins": [],
     "extra": {
       "eas": {
         "projectId": "afb899e9-258b-440e-b056-d80d23d945db"

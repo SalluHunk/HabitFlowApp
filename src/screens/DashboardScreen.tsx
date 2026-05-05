@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View, Text, FlatList, TouchableOpacity, StyleSheet,
   SafeAreaView, RefreshControl, StatusBar,
@@ -9,7 +9,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList, HabitWithStatus } from '../types';
 import {
   getAllHabits, getLogsForHabit, isLogged, toggleLog,
-  createHabit, updateHabit, deleteHabit, getHabit,
+  createHabit, updateHabit,
 } from '../database/db';
 import { calculateStreak } from '../utils/streak';
 import { getDashboardStats } from '../utils/analytics';
@@ -91,8 +91,7 @@ export default function DashboardScreen() {
   }, [habits]);
 
   const stats = React.useMemo(() => {
-    const raw = getAllHabits();
-    return getDashboardStats(raw, allLogMap);
+    return getDashboardStats(habits, allLogMap);
   }, [habits, allLogMap]);
 
   const today = formatDate(new Date());

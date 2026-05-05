@@ -26,6 +26,14 @@ import AddHabitModal from '../components/AddHabitModal';
 
 const SCREEN_W = Dimensions.get('window').width;
 
+function hexToRgb(hex: string) {
+  const clean = (hex ?? '').replace('#', '').padEnd(6, '0').slice(0, 6);
+  const r = parseInt(clean.slice(0, 2), 16) || 0;
+  const g = parseInt(clean.slice(2, 4), 16) || 0;
+  const b = parseInt(clean.slice(4, 6), 16) || 0;
+  return { r, g, b };
+}
+
 type Route = { key: string; name: 'HabitDetail'; params: { habitId: number } };
 type Nav   = NativeStackNavigationProp<RootStackParamList, 'HabitDetail'>;
 
@@ -210,7 +218,7 @@ export default function HabitDetailScreen() {
                   backgroundGradientFrom: Colors.card,
                   backgroundGradientTo: Colors.card,
                   decimalPlaces: 0,
-                  color: (op = 1) => habit.color + Math.round(op * 255).toString(16).padStart(2, '0'),
+                  color: (op = 1) => { const {r,g,b} = hexToRgb(habit.color); return `rgba(${r},${g},${b},${op})`; },
                   labelColor: () => Colors.text3,
                   style: { borderRadius: Radius.md },
                   barPercentage: 0.6,

@@ -3,7 +3,8 @@ import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text, View, Platform } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Text, View, Platform, StyleSheet } from 'react-native';
 
 import { initDB } from './src/database/db';
 import { Colors, Radius, Shadow } from './src/theme';
@@ -50,15 +51,25 @@ function MainTabs() {
 
 export default function App() {
   useEffect(() => {
-    initDB();
+    try {
+      initDB();
+    } catch (e) {
+      console.error('DB init error:', e);
+    }
   }, []);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
-        <Stack.Screen name="MainTabs"    component={MainTabs} />
-        <Stack.Screen name="HabitDetail" component={HabitDetailScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <GestureHandlerRootView style={styles.root}>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
+          <Stack.Screen name="MainTabs"    component={MainTabs} />
+          <Stack.Screen name="HabitDetail" component={HabitDetailScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+});

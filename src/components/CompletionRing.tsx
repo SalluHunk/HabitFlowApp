@@ -10,9 +10,10 @@ interface Props {
 }
 
 export default function CompletionRing({ pct, size = 80, color = Colors.primary }: Props) {
+  const safePct = isNaN(pct) || pct == null ? 0 : Math.min(100, Math.max(0, pct));
   const r = (size - 12) / 2;
   const circ = 2 * Math.PI * r;
-  const offset = circ * (1 - pct / 100);
+  const offset = circ * (1 - safePct / 100);
 
   return (
     <View style={{ width: size, height: size, position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
@@ -33,7 +34,7 @@ export default function CompletionRing({ pct, size = 80, color = Colors.primary 
         />
       </Svg>
       <View style={styles.label}>
-        <Text style={styles.pct}>{pct}%</Text>
+        <Text style={styles.pct}>{safePct}%</Text>
         <Text style={styles.sub}>done</Text>
       </View>
     </View>

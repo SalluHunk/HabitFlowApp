@@ -14,7 +14,7 @@ import {
 } from '../utils/analytics';
 import {
   Colors, FontSize, Radius, Shadow, Spacing,
-  CategoryColors, CategoryBadgeColors,
+  CategoryBadgeColors,
 } from '../theme';
 import StatCard from '../components/StatCard';
 import HeatmapGrid from '../components/HeatmapGrid';
@@ -63,9 +63,8 @@ export default function AnalyticsScreen() {
 
   if (!stats) return null;
 
-  const weekLabels  = weekly.map(d => d.label);
-  const weekCounts  = weekly.map(d => d.count);
-  const maxWeek     = Math.max(1, ...weekCounts);
+  const weekLabels = weekly.map(d => d.label);
+  const weekCounts = weekly.map(d => d.count);
 
   return (
     <SafeAreaView style={styles.safe}>
