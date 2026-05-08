@@ -8,6 +8,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../api/AuthContext';
 import { Colors, FontSize, Radius, Spacing } from '../theme';
 import { AuthStackParamList } from '../types';
+import GoogleSignInButton from '../components/GoogleSignInButton';
 
 type Nav = NativeStackNavigationProp<AuthStackParamList, 'Signup'>;
 
@@ -85,6 +86,14 @@ export default function SignupScreen() {
             : <Text style={styles.btnPrimaryTxt}>Create account</Text>}
         </TouchableOpacity>
 
+        <View style={styles.divider}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerTxt}>or</Text>
+          <View style={styles.dividerLine} />
+        </View>
+
+        <GoogleSignInButton />
+
         <TouchableOpacity onPress={() => nav.navigate('Login')}>
           <Text style={styles.foot}>
             Already have an account? <Text style={styles.link}>Sign in</Text>
@@ -114,4 +123,7 @@ const styles = StyleSheet.create({
   btnPrimaryTxt: { color: Colors.white, fontWeight: '700', fontSize: FontSize.base },
   foot: { textAlign: 'center', marginTop: Spacing.xl, color: Colors.text2, fontSize: FontSize.sm },
   link: { color: Colors.primary, fontWeight: '700' },
+  divider: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginTop: Spacing.lg },
+  dividerLine: { flex: 1, height: 1, backgroundColor: Colors.border },
+  dividerTxt: { fontSize: FontSize.xs, color: Colors.text3, fontWeight: '600' },
 });

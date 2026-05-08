@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // IMPORTANT: replace this with your deployed Render URL once live.
 // For local dev on Android emulator, use http://10.0.2.2:5000
 // For physical device on same wifi, use http://<YOUR-LAN-IP>:5000
-export const API_BASE_URL = 'https://habittracker-xxxx.onrender.com';
+export const API_BASE_URL = 'https://habittracker-stim.onrender.com';
 
 const TOKEN_KEY = 'habitflow.jwt';
 
