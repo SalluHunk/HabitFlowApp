@@ -14,8 +14,10 @@ import DashboardScreen   from './src/screens/DashboardScreen';
 import HabitDetailScreen from './src/screens/HabitDetailScreen';
 import AnalyticsScreen   from './src/screens/AnalyticsScreen';
 import ProfileScreen     from './src/screens/ProfileScreen';
-import LoginScreen       from './src/screens/LoginScreen';
-import SignupScreen      from './src/screens/SignupScreen';
+import LoginScreen           from './src/screens/LoginScreen';
+import SignupScreen          from './src/screens/SignupScreen';
+import ForgotPasswordScreen  from './src/screens/ForgotPasswordScreen';
+import ResetPasswordScreen   from './src/screens/ResetPasswordScreen';
 
 const Stack     = createNativeStackNavigator<RootStackParamList>();
 const Tab       = createBottomTabNavigator<BottomTabParamList>();
@@ -57,8 +59,10 @@ function MainTabs() {
 function AuthFlow() {
   return (
     <AuthStack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
-      <AuthStack.Screen name="Login"  component={LoginScreen} />
-      <AuthStack.Screen name="Signup" component={SignupScreen} />
+      <AuthStack.Screen name="Login"          component={LoginScreen} />
+      <AuthStack.Screen name="Signup"         component={SignupScreen} />
+      <AuthStack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+      <AuthStack.Screen name="ResetPassword"  component={ResetPasswordScreen} />
     </AuthStack.Navigator>
   );
 }

@@ -91,6 +91,22 @@ export async function apiMe() {
   return request<{ user: AuthUser }>('/api/auth/me');
 }
 
+export async function apiForgotPassword(email: string) {
+  return request<{ ok: boolean; message: string }>('/api/auth/forgot-password', {
+    method: 'POST',
+    body: { email },
+    auth: false,
+  });
+}
+
+export async function apiResetPassword(email: string, code: string, newPassword: string) {
+  return request<{ ok: boolean; message: string }>('/api/auth/reset-password', {
+    method: 'POST',
+    body: { email, code, new_password: newPassword },
+    auth: false,
+  });
+}
+
 // ── Habits ────────────────────────────────────────────────────────────────────
 
 export async function apiListHabits() {

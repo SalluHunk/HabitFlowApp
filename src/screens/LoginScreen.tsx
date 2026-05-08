@@ -9,6 +9,7 @@ import { useAuth } from '../api/AuthContext';
 import { Colors, FontSize, Radius, Spacing } from '../theme';
 import { AuthStackParamList } from '../types';
 import GoogleSignInButton from '../components/GoogleSignInButton';
+import PasswordInput from '../components/PasswordInput';
 
 type Nav = NativeStackNavigationProp<AuthStackParamList, 'Login'>;
 
@@ -57,14 +58,15 @@ export default function LoginScreen() {
         />
 
         <Text style={styles.label}>Password</Text>
-        <TextInput
-          style={styles.input}
+        <PasswordInput
           value={password}
           onChangeText={setPassword}
           placeholder="At least 6 characters"
-          placeholderTextColor={Colors.text3}
-          secureTextEntry
         />
+
+        <TouchableOpacity onPress={() => nav.navigate('ForgotPassword')}>
+          <Text style={styles.forgot}>Forgot password?</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity style={styles.btnPrimary} onPress={handleLogin} disabled={busy}>
           {busy
@@ -111,4 +113,5 @@ const styles = StyleSheet.create({
   divider: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginTop: Spacing.lg },
   dividerLine: { flex: 1, height: 1, backgroundColor: Colors.border },
   dividerTxt: { fontSize: FontSize.xs, color: Colors.text3, fontWeight: '600' },
+  forgot: { color: Colors.primary, fontSize: FontSize.sm, fontWeight: '600', marginTop: Spacing.sm, alignSelf: 'flex-end' },
 });

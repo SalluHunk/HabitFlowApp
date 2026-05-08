@@ -9,6 +9,7 @@ import { useAuth } from '../api/AuthContext';
 import { Colors, FontSize, Radius, Spacing } from '../theme';
 import { AuthStackParamList } from '../types';
 import GoogleSignInButton from '../components/GoogleSignInButton';
+import PasswordInput from '../components/PasswordInput';
 
 type Nav = NativeStackNavigationProp<AuthStackParamList, 'Signup'>;
 
@@ -71,13 +72,10 @@ export default function SignupScreen() {
         />
 
         <Text style={styles.label}>Password</Text>
-        <TextInput
-          style={styles.input}
+        <PasswordInput
           value={password}
           onChangeText={setPassword}
           placeholder="At least 6 characters"
-          placeholderTextColor={Colors.text3}
-          secureTextEntry
         />
 
         <TouchableOpacity style={styles.btnPrimary} onPress={handleSignup} disabled={busy}>

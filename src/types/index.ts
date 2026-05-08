@@ -86,4 +86,6 @@ export type BottomTabParamList = {
 export type AuthStackParamList = {
   Login: undefined;
   Signup: undefined;
+  ForgotPassword: undefined;
+  ResetPassword: { email?: string };
 };
