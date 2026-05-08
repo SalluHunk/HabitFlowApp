@@ -80,4 +80,10 @@ export type RootStackParamList = {
 export type BottomTabParamList = {
   Dashboard: undefined;
   Analytics: undefined;
+  Profile: undefined;
+};
+
+export type AuthStackParamList = {
+  Login: undefined;
+  Signup: undefined;
 };
